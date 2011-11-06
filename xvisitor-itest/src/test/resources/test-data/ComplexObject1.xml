@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ComplexObject xmlns="http://www.example.org/simple" xmlns:i="http://www.example.org/imported">
+    <SimpleRequest>
+        <request1>The first request</request1>
+        <request2>The second request</request2>
+    </SimpleRequest>
+    <SimpleRequest>
+        <request1>The third request</request1>
+        <request2>The fourth request</request2>
+    </SimpleRequest>
+    <repeating>bla</repeating>
+    <repeating>bla bla</repeating>
+    <SimpleResponse>
+        <response1>Response to first request</response1>
+        <response2>Response to second request</response2>
+    </SimpleResponse>
+    <i:ImportedData>
+        <i:importedType>
+            <i:message>
+                <i:child>Hello JAXB!</i:child>
+            </i:message>
+        </i:importedType>
+    </i:ImportedData>
+    <localElement>
+        <i:message>
+            <i:child>Hello JAXB!</i:child>
+        </i:message>
+        <SimpleResponse>
+            <response1>Local response 1</response1>
+            <response2>Local response 2</response2>
+        </SimpleResponse>
+    </localElement>
+</ComplexObject>

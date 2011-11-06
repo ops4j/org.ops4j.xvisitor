@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SimpleRequest xmlns="http://www.example.org/simple">
+  <request1>The first request</request1>
+  <request2>The second request</request2>
+</SimpleRequest>
