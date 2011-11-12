@@ -55,12 +55,17 @@ public class AcceptMethodCreator {
 
     private Set<JType> traversableTypes = new HashSet<JType>();
     private JClass stringClass;
+    private JClass objectClass;
+
+    private JClass jaxbElementClass;
 
     public AcceptMethodCreator(JDefinedClass visitorAction, JDefinedClass visitable, Outline outline) {
         this.visitorAction = visitorAction;
         this.visitable = visitable;
         this.outline = outline;
         this.stringClass = visitable.owner().ref(String.class);
+        this.objectClass = visitable.owner().ref(Object.class);
+        this.jaxbElementClass = visitable.owner().ref(JAXBElement.class);
     }
 
     public void run(Set<ClassOutline> sorted, JDefinedClass visitor) {
@@ -120,7 +125,9 @@ public class AcceptMethodCreator {
             body._if(result.ne(visitorAction.enumConstant("CONTINUE")))._then()._break();
         }
         else if (isAnyType(collType)) {
-            JForEach forEach = block.forEach(collType, "obj", invoke(getter));
+            JForEach forEach = block.forEach(objectClass, "obj", invoke(getter));
+            forEach.body()._if(ref("obj")._instanceof(jaxbElementClass))._then()
+                .assign(ref("obj"), invoke(cast(jaxbElementClass, ref("obj")), "getValue"));
             JConditional conditional = forEach.body()._if(ref("obj")._instanceof(visitable));
             conditional._then().invoke(cast(visitable, ref("obj")), "accept")
                     .arg(vizParam);
