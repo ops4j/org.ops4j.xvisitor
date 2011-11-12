@@ -1,0 +1,52 @@
+<bindings xmlns="http://java.sun.com/xml/ns/jaxb" version="2.1"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <bindings schemaLocation="../xsd/dbpoolx.xsd">
+    <bindings node="//xs:element[@name='revhistory']">
+      <bindings node=".//xs:element[@ref='revision']">
+        <property name="revision1" />
+      </bindings>
+    </bindings>
+    <bindings node="//xs:element[@name='mediaobjectco']">
+      <bindings node="./xs:complexType/xs:sequence/xs:element[@ref='imageobjectco']">
+        <property name="imageobjectco1" />
+      </bindings>
+    </bindings>
+    <bindings node="//xs:element[@name='ndxterm.class']">
+      <class name="NdxtermClassDbPoolx"/>
+    </bindings>
+    <bindings node="//xs:element[@name='ndxterm.class']">
+      <bindings node="./xs:complexType">
+        <class name="Type1"/>
+      </bindings>
+    </bindings>
+  </bindings>
+  <bindings schemaLocation="../xsd/htmltblx.xsd">
+    <bindings node="//xs:attributeGroup[@name='i18n']">
+      <bindings node=".//xs:attribute[@ref='xml:lang']">
+        <property name="language" />
+      </bindings>
+    </bindings>
+    <bindings node="//xs:attributeGroup[@name='secur']">
+      <bindings node=".//xs:attribute[@name='title']">
+        <property name="title1" />
+      </bindings>
+    </bindings>
+  </bindings>
+  <!--bindings schemaLocation="../xsd/dbhierx.xsd">
+    <bindings node="//xs:element[@name='book.class']">
+      <bindings node=".//xs:element[@ref='chapter.class']">
+        <class name="XXX" />
+      </bindings>
+    </bindings>
+  </bindings-->
+  <bindings schemaLocation="../xsd/dbhierx.xsd">
+    <bindings node="//xs:element[@name='chapter.class']">
+      <class name="ChapterClass1" />
+    </bindings>
+    <bindings node="//xs:element[@name='chapter.class']">
+      <bindings node="./xs:complexType">
+        <class name="Type2"/>
+      </bindings>
+    </bindings>
+  </bindings>
+</bindings>

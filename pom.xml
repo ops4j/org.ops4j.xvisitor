@@ -12,6 +12,7 @@
   <modules>
       <module>xvisitor-plugin</module>
       <module>xvisitor-itest</module>
+      <module>xvisitor-docbook</module>
   </modules>
   <build>
     <plugins>
