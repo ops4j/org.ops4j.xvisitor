@@ -25,10 +25,19 @@ import com.sun.codemodel.JPackage;
 import com.sun.tools.xjc.outline.ClassOutline;
 import com.sun.tools.xjc.outline.Outline;
 
+/**
+ * Creates the Visitable interface with its single {@code accept()} method which is implemented by
+ * all complex model classes.
+ * 
+ * @author hwellmann
+ * 
+ */
 public class VisitableCreator extends CodeCreator {
 
+    /** Return type of {@code accept()} method. */
     private JDefinedClass visitorAction;
 
+    /** Visitor argument type. */
     private JDefinedClass visitor;
 
     public VisitableCreator(JDefinedClass visitorAction, JDefinedClass visitor,
@@ -38,12 +47,19 @@ public class VisitableCreator extends CodeCreator {
         this.visitor = visitor;
     }
 
+    /**
+     * Creates Visitable interface and lets each model class implement it.
+     */
     @Override
     protected void run(Set<ClassOutline> classes) {
-        JDefinedClass visitable = outline.getClassFactory().createInterface(pakkage, "Visitable", null);
+        // Create Visitable interface
+        JDefinedClass visitable = outline.getClassFactory().createInterface(pkg, "Visitable", null);
         setOutput(visitable);
+        
+        // Add accept() method
         visitable.method(JMod.PUBLIC, visitorAction, "accept").param(visitor, "visitor");
 
+        // Add "implements Visitable" to model classes
         for (ClassOutline classOutline : classes) {
             classOutline.implClass._implements(visitable);
         }

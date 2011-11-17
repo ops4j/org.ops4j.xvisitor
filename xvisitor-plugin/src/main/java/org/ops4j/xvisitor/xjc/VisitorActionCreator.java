@@ -25,6 +25,11 @@ import com.sun.codemodel.JPackage;
 import com.sun.tools.xjc.outline.ClassOutline;
 import com.sun.tools.xjc.outline.Outline;
 
+/**
+ * Creates the VisitorAction enum, used as return type for all Visitor methods.
+ * @author hwellmann
+ *
+ */
 public class VisitorActionCreator extends CodeCreator {
 
     public VisitorActionCreator(Outline outline, JPackage pkg) {
@@ -34,7 +39,7 @@ public class VisitorActionCreator extends CodeCreator {
     @Override
     protected void run(Set<ClassOutline> aClasses) {
 
-        JDefinedClass actionClass = outline.getClassFactory().createClass(pakkage, "VisitorAction",
+        JDefinedClass actionClass = outline.getClassFactory().createClass(pkg, "VisitorAction",
                 null, ClassType.ENUM);
         setOutput(actionClass);
 

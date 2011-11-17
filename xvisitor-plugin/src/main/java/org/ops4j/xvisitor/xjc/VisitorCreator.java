@@ -26,10 +26,23 @@ import com.sun.codemodel.JPackage;
 import com.sun.tools.xjc.outline.ClassOutline;
 import com.sun.tools.xjc.outline.Outline;
 
+/**
+ * Creates the Visitor interface with {@code enter()} and {@code leave()} methods for every
+ * complex model class and a {@code visit(String)} method for mixed content.
+ * @author hwellmann
+ *
+ */
 public class VisitorCreator extends CodeCreator {
 
+    /** Return type for Visitor methods. */
     private JDefinedClass visitorAction;
 
+    /**
+     * Creates a VisitorCreator.
+     * @param visitorAction  return type for visitor methods
+     * @param outline        outline of code model
+     * @param pkg            package for Visitor class
+     */
     public VisitorCreator(JDefinedClass visitorAction, Outline outline, JPackage pkg) {
         super(outline, pkg);
         this.visitorAction = visitorAction;
@@ -37,16 +50,21 @@ public class VisitorCreator extends CodeCreator {
 
     @Override
     protected void run(Set<ClassOutline> classes) {
+        
+        // Create Visitor interface
+        JDefinedClass visitor = outline.getClassFactory().createInterface(pkg, "Visitor", null);
+        setOutput(visitor);
 
-        setOutput(outline.getClassFactory().createInterface(pakkage, "Visitor", null));
-
+        // Add enter() and leave() methods for every model class
         for (ClassOutline classOutline : classes) {
             JMethod enterMethod = getOutput().method(JMod.PUBLIC, visitorAction, "enter");
-            enterMethod.param(classOutline.implClass, "aBean");
+            enterMethod.param(classOutline.implClass, "bean");
 
             JMethod leaveMethod = getOutput().method(JMod.PUBLIC, visitorAction, "leave");
-            leaveMethod.param(classOutline.implClass, "aBean");
+            leaveMethod.param(classOutline.implClass, "bean");
         }
+        
+        // Add visit() method for String content
         JMethod vizMethod = getOutput().method(JMod.PUBLIC, visitorAction, "visit");
         vizMethod.param(getOutput().owner().ref(String.class), "text");
     }

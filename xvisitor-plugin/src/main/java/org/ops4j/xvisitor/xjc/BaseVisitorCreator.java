@@ -26,11 +26,23 @@ import com.sun.codemodel.JPackage;
 import com.sun.tools.xjc.outline.ClassOutline;
 import com.sun.tools.xjc.outline.Outline;
 
+/**
+ * Creates BaseVisitor class implementing the Visitor interface with no-op methods.
+ * @author hwellmann
+ *
+ */
 public class BaseVisitorCreator extends CodeCreator {
 
     private JDefinedClass visitorAction;
     private JDefinedClass visitor;
 
+    /**
+     * Creates a BaseVisitorCreator
+     * @param visitorAction  return type of Visitor methods
+     * @param visitor        Visitor interface
+     * @param outline        code model
+     * @param pkg            package for generated class
+     */
     public BaseVisitorCreator(JDefinedClass visitorAction, JDefinedClass visitor,
             Outline outline, JPackage pkg) {
         super(outline, pkg);
@@ -38,6 +50,10 @@ public class BaseVisitorCreator extends CodeCreator {
         this.visitor = visitor;
     }
 
+    /**
+     * Creates the BaseVisitor class, implementing all required methods by 
+     * {@code return VisitorAction.CONTINUE}.
+     */
     @Override
     protected void run(Set<ClassOutline> aClasses) {
         JDefinedClass baseVisitor = getOutline().getClassFactory().createClass(getPackage(), "BaseVisitor", null);

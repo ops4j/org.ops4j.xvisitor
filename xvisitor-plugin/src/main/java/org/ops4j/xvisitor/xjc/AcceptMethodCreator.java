@@ -45,20 +45,44 @@ import com.sun.tools.xjc.outline.ClassOutline;
 import com.sun.tools.xjc.outline.FieldOutline;
 import com.sun.tools.xjc.outline.Outline;
 
+/**
+ * Creates the {@code accept(Visitor)} method for each model class, implementing depth-first
+ * traversal of the JAXB object graph.
+ * @author hwellmann
+ *
+ */
 public class AcceptMethodCreator {
 
+    /** Constant for empty type list. */
     private static final JType[] NONE = new JType[0];
 
+    /** Return type of Visitor methods. */
     private JDefinedClass visitorAction;
+    
+    /** Model object of Visitable interface. */
     private JDefinedClass visitable;
+    
+    /** Code model. */
     private Outline outline;
 
+    /** Set of types to be traversed by Visitors. */
     private Set<JType> traversableTypes = new HashSet<JType>();
+    
+    /** Model object for java.lang.String. */
     private JClass stringClass;
+
+    /** Model object for java.lang.Object. */
     private JClass objectClass;
 
+    /** Model object for java.xml.bind.JAXBElement. */
     private JClass jaxbElementClass;
 
+    /**
+     * Creates an AcceptMethodCreator.
+     * @param visitorAction return type of Visitor methods
+     * @param visitable     Visitable interface
+     * @param outline       code model
+     */
     public AcceptMethodCreator(JDefinedClass visitorAction, JDefinedClass visitable, Outline outline) {
         this.visitorAction = visitorAction;
         this.visitable = visitable;
@@ -71,21 +95,28 @@ public class AcceptMethodCreator {
     public void run(Set<ClassOutline> sorted, JDefinedClass visitor) {
         collectTraversableTypes();
 
+        // For each model class
         for (ClassOutline classOutline : sorted) {
 
+            // Implement accept() method body
             JDefinedClass beanImpl = classOutline.implClass;
             JMethod acceptMethod = beanImpl.method(JMod.PUBLIC, visitorAction, "accept");
-            JVar vizParam = acceptMethod.param(visitor, "visitor");
+            JVar visitorParam = acceptMethod.param(visitor, "visitor");
             JBlock block = acceptMethod.body();
-            JVar result = block.decl(visitorAction, "result",
-                    vizParam.invoke("enter").arg(_this()));
+            
+            // Declare result and initialize with return value of enter() method
+            JVar result = block.decl(visitorAction, "result", visitorParam.invoke("enter").arg(_this()));
 
+            // Visit each field
             List<FieldOutline> fields = findAllDeclaredAndInheritedFields(classOutline);
             for (FieldOutline field : fields) {
-                visitField(field, block, vizParam, result);
+                visitField(field, block, visitorParam, result);
             }
 
-            JVar leaveResult = block.decl(visitorAction, "leaveResult", invoke(vizParam, "leave").arg(_this()));
+            // Call leave method
+            JVar leaveResult = block.decl(visitorAction, "leaveResult", invoke(visitorParam, "leave").arg(_this()));
+            
+            // Compute final result
             JConditional conditional = block._if(leaveResult.eq(visitorAction.enumConstant("TERMINATE")));
             conditional._then().
                 assign(result, leaveResult);
@@ -101,41 +132,82 @@ public class AcceptMethodCreator {
         }
     }
 
-    private void visitField(FieldOutline field, JBlock block, JVar vizParam, JVar result) {
+    /**
+     * Visits a field. Collections and simple fields are handles separately.
+     * @param field
+     * @param block
+     * @param visitor
+     * @param result
+     */
+    private void visitField(FieldOutline field, JBlock block, JVar visitor, JVar result) {
         JMethod getter = getter(field);
         boolean isCollection = field.getPropertyInfo().isCollection();
         if (isCollection) {
-            visitCollectionField(field, block, vizParam, result, getter);
+            visitCollectionField(field, block, visitor, result, getter);
         }
         else if (isTraversable(field.getRawType())) {
-            visitSimpleField(field, block, vizParam, result, getter);
+            visitSimpleField(field, block, visitor, result, getter);
         }
     }
 
-    private void visitCollectionField(FieldOutline field, JBlock block, JVar vizParam, JVar result,
+    /**
+     * Visits a collection field by looping over its elements, provided the element type is
+     * non-primitive.
+     * @param field    collection field to be visited
+     * @param block    enclosing block of generated accept() method
+     * @param visitor  visitor parameter
+     * @param result   result of previous accept() or enter() invocation
+     * @param getter   getter method for this field
+     */
+    private void visitCollectionField(FieldOutline field, JBlock block, JVar visitor, JVar result,
             JMethod getter) {
         JType rawType = field.getRawType();
         JClass collClazz = (JClass) rawType;
         JClass collType = collClazz.getTypeParameters().get(0);
+        
+        // If the element type is traversable, visit each element, breaking the loop if the
+        // visitor returns SKIP or TERMINATE.
         if (traversableTypes.contains(collType)) {
+        
             JForEach forEach = block.forEach((collClazz).getTypeParameters().get(0), "bean",
                     invoke(getter));
             JBlock body = forEach.body();
-            body.assign(result, invoke(ref("bean"), "accept").arg(vizParam));
+            body.assign(result, invoke(ref("bean"), "accept").arg(visitor));
             body._if(result.ne(visitorAction.enumConstant("CONTINUE")))._then()._break();
         }
+        
+        // If the collection type is Object or Serializable, this may be a choice or mixed content
         else if (isAnyType(collType)) {
+            
+            // Loop over elements
             JForEach forEach = block.forEach(objectClass, "obj", invoke(getter));
+            
+            // If element is a JAXBElement, unwrap it
             forEach.body()._if(ref("obj")._instanceof(jaxbElementClass))._then()
                 .assign(ref("obj"), invoke(cast(jaxbElementClass, ref("obj")), "getValue"));
+            
+            // If the (unwrapped) element is Visitable, call its accept method
             JConditional conditional = forEach.body()._if(ref("obj")._instanceof(visitable));
-            conditional._then().invoke(cast(visitable, ref("obj")), "accept")
-                    .arg(vizParam);
+            conditional._then().assign(result, invoke(cast(visitable, ref("obj")), "accept")
+                    .arg(visitor));
+            
+            // Else, if it is a (mixed content) String, call the visit() method
             conditional._elseif(ref("obj")._instanceof(stringClass))._then()
-                    .invoke(vizParam, "visit").arg(cast(stringClass, ref("obj")));
+                    .assign(result, invoke(visitor, "visit").arg(cast(stringClass, ref("obj"))));
+
+            // Break loop, depending on result
+            forEach.body()._if(result.ne(visitorAction.enumConstant("CONTINUE")))._then()._break();
         }
     }
 
+    /**
+     * Visits a simple field, possibly wrapped in JAXBElement.
+     * @param field
+     * @param block
+     * @param vizParam
+     * @param result
+     * @param getter
+     */
     private void visitSimpleField(FieldOutline field, JBlock block, JVar vizParam, JVar result,
             JMethod getter) {
         JInvocation visitable = null;
@@ -150,6 +222,11 @@ public class AcceptMethodCreator {
                 ._if(visitable.ne(_null()))._then().assign(result, resultExpr);
     }
 
+    /**
+     * Find all direct and inherited fields of the given class.
+     * @param classOutline
+     * @return
+     */
     private List<FieldOutline> findAllDeclaredAndInheritedFields(ClassOutline classOutline) {
         List<FieldOutline> fields = new LinkedList<FieldOutline>();
         ClassOutline currentClassOutline = classOutline;
@@ -182,7 +259,7 @@ public class AcceptMethodCreator {
 
     /**
      * Returns true if the type is a JAXBElement. In the case of JAXBElements, we want to traverse
-     * its underlying value as opposed to the JAXBElement.
+     * its underlying value and not the JAXBElement itself.
      * 
      * @param type
      */
@@ -208,11 +285,12 @@ public class AcceptMethodCreator {
     }
 
     /**
-     * Borrowed this code from jaxb-commons project
+     * Returns the getter method for a given field, taking care of <em>get</em> vs. <em>is</em>
+     * prefixes.
      * 
      * @param fieldOutline
      */
-    private static JMethod getter(FieldOutline fieldOutline) {
+    private JMethod getter(FieldOutline fieldOutline) {
         JDefinedClass theClass = fieldOutline.parent().implClass;
         String publicName = fieldOutline.getPropertyInfo().getName(true);
         JMethod getGetter = theClass.getMethod("get" + publicName, NONE);
