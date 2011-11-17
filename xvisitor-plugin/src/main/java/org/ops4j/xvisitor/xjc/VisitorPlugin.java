@@ -35,8 +35,9 @@ import com.sun.tools.xjc.outline.Outline;
 
 /**
  * Entry point for the XVisitor xjc plugin.
+ * 
  * @author hwellmann
- *
+ * 
  */
 public class VisitorPlugin extends Plugin {
 
@@ -49,7 +50,7 @@ public class VisitorPlugin extends Plugin {
 
     @Override
     public String getUsage() {
-        return "  -Xvisitor          :  add Visitable interface to the generated code";
+        return "  -Xvisitor          :  add Visitor pattern support to the generated code";
     }
 
     @Override
@@ -58,8 +59,11 @@ public class VisitorPlugin extends Plugin {
 
         String arg = args[index];
         if (arg.startsWith("-Xvisitor-package:")) {
-            packageName = arg.split(":")[1];
-            return 1;
+            String[] words = arg.split(":");
+            if (words.length == 2) {
+                packageName = words[1];
+                return 1;
+            }
         }
         return 0;
     }
@@ -69,34 +73,35 @@ public class VisitorPlugin extends Plugin {
             throws SAXException {
         try {
 
-            JPackage vizPackage = getOrCreatePackageForVisitors(outline);
+            JPackage visitorPackage = getOrCreatePackageForVisitors(outline);
 
             Set<ClassOutline> sorted = sortClasses(outline);
 
             VisitorActionCreator createVisitorActionEnum = new VisitorActionCreator(outline,
-                    vizPackage);
+                    visitorPackage);
             createVisitorActionEnum.run(sorted);
             JDefinedClass visitorAction = createVisitorActionEnum.getOutput();
 
             // create visitor interface
-            VisitorCreator createVisitorInterface = new VisitorCreator(
-                    visitorAction, outline, vizPackage);
+            VisitorCreator createVisitorInterface = new VisitorCreator(visitorAction, outline,
+                    visitorPackage);
             createVisitorInterface.run(sorted);
             JDefinedClass visitor = createVisitorInterface.getOutput();
 
             // create visitable interface and have all the beans implement it
-            VisitableCreator createVisitableInterface = new VisitableCreator(
-                    visitorAction, visitor, outline, vizPackage);
+            VisitableCreator createVisitableInterface = new VisitableCreator(visitorAction,
+                    visitor, outline, visitorPackage);
             createVisitableInterface.run(sorted);
             JDefinedClass visitable = createVisitableInterface.getOutput();
 
             // add accept method to beans
-            AcceptMethodCreator addAcceptMethod = new AcceptMethodCreator(visitorAction, visitable, outline);
+            AcceptMethodCreator addAcceptMethod = new AcceptMethodCreator(visitorAction, visitable,
+                    outline);
             addAcceptMethod.run(sorted, visitor);
 
             // create base visitor class
-            BaseVisitorCreator createBaseVisitorClass = new BaseVisitorCreator(
-                    visitorAction, visitor, outline, vizPackage);
+            BaseVisitorCreator createBaseVisitorClass = new BaseVisitorCreator(visitorAction,
+                    visitor, outline, visitorPackage);
             createBaseVisitorClass.run(sorted);
 
         }
@@ -123,14 +128,14 @@ public class VisitorPlugin extends Plugin {
     }
 
     private JPackage getOrCreatePackageForVisitors(Outline outline) {
-        JPackage vizPackage = null;
+        JPackage visitorPackage = null;
         if (getPackageName() == null) {
-            vizPackage = outline.getAllPackageContexts().iterator().next()._package();
+            visitorPackage = outline.getAllPackageContexts().iterator().next()._package();
         }
         else {
-            vizPackage = outline.getCodeModel()._package(getPackageName());
+            visitorPackage = outline.getCodeModel()._package(getPackageName());
         }
-        return vizPackage;
+        return visitorPackage;
     }
 
     public String getPackageName() {
