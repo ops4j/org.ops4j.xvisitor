@@ -33,6 +33,11 @@ import com.sun.tools.xjc.Plugin;
 import com.sun.tools.xjc.outline.ClassOutline;
 import com.sun.tools.xjc.outline.Outline;
 
+/**
+ * Entry point for the XVisitor xjc plugin.
+ * @author hwellmann
+ *
+ */
 public class VisitorPlugin extends Plugin {
 
     private String packageName;
@@ -44,7 +49,7 @@ public class VisitorPlugin extends Plugin {
 
     @Override
     public String getUsage() {
-        return null;
+        return "  -Xvisitor          :  add Visitable interface to the generated code";
     }
 
     @Override
