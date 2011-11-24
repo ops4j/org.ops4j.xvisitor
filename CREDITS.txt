@@ -1,0 +1,4 @@
+XVisitor is derived from the jaxb-visitor project
+(http://code.google.com/p/jaxb-visitor/)
+which is also released under an Apache License.
+
