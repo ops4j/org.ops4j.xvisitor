@@ -8,6 +8,7 @@
     <relativePath>..</relativePath>
   </parent>
   <artifactId>xvisitor-docbook</artifactId>
+  <name>XVisitor DocBook Tests</name>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
