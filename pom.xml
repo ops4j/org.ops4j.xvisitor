@@ -10,8 +10,8 @@
       <version>2.0.0</version>
   </parent>
   <scm>
-    <connection>scm:git:git@github.com:ops4j/org.ops4j.xvisitor.git</connection>
-    <developerConnection>scm:git:git@github.com:ops4j/org.ops4j.xvisitor.git</developerConnection>
+    <connection>scm:git:git@github.com:ops4j/ops4j/org.ops4j.xvisitor.git</connection>
+    <developerConnection>scm:git:git@github.com:ops4j/ops4j/org.ops4j.xvisitor.git</developerConnection>
     <url>http://github.com/ops4j/org.ops4j.xvisitor/tree/master</url>
   </scm>
   <modules>
