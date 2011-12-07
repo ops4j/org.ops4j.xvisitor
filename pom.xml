@@ -11,7 +11,7 @@
   </parent>
   <scm>
     <connection>scm:git:git://github.com/ops4j/org.ops4j.xvisitor.git</connection>
-    <developerConnection>scm:git:git://github.com/ops4j/org.ops4j.xvisitor.git</developerConnection>
+    <developerConnection>${release-master-altGitURL}</developerConnection>
     <url>http://github.com/ops4j/org.ops4j.xvisitor/tree/master</url>
   </scm>
   <modules>
