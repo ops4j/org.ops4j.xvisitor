@@ -182,6 +182,9 @@ public class AcceptMethodCreator {
             // Loop over elements
             JForEach forEach = block.forEach(objectClass, "obj", invoke(getter));
             
+            // Break loop, depending on result
+            forEach.body()._if(result.ne(visitorAction.enumConstant("CONTINUE")))._then()._break();
+
             // If element is a JAXBElement, unwrap it
             forEach.body()._if(ref("obj")._instanceof(jaxbElementClass))._then()
                 .assign(ref("obj"), invoke(cast(jaxbElementClass, ref("obj")), "getValue"));
@@ -194,9 +197,6 @@ public class AcceptMethodCreator {
             // Else, if it is a (mixed content) String, call the visit() method
             conditional._elseif(ref("obj")._instanceof(stringClass))._then()
                     .assign(result, invoke(visitor, "visit").arg(cast(stringClass, ref("obj"))));
-
-            // Break loop, depending on result
-            forEach.body()._if(result.ne(visitorAction.enumConstant("CONTINUE")))._then()._break();
         }
     }
 
