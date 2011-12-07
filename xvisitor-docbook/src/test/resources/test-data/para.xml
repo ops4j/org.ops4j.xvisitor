@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<article>
+  <title>DataScript Language Overview</title>
+
+  <section>
+      <title>Motivation</title>
+
+      <para><literal>rds</literal> and the DataScript dialect defined in this
+      document are a spin-off of the <emphasis>Physical Storage Format
+      Standardization Initiative</emphasis> (PSI), a joint effort of about 20
+      partner companies in the automotive industry to standardize a car
+      navigation database format.</para>
+
+  </section>
+
+</article> 
