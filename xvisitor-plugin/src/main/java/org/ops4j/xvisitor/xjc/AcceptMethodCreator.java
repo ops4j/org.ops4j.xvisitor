@@ -133,7 +133,7 @@ public class AcceptMethodCreator {
     }
 
     /**
-     * Visits a field. Collections and simple fields are handles separately.
+     * Visits a field. Collections and simple fields are handled separately.
      * @param field
      * @param block
      * @param visitor
@@ -172,8 +172,8 @@ public class AcceptMethodCreator {
             JForEach forEach = block.forEach((collClazz).getTypeParameters().get(0), "bean",
                     invoke(getter));
             JBlock body = forEach.body();
-            body.assign(result, invoke(ref("bean"), "accept").arg(visitor));
             body._if(result.ne(visitorAction.enumConstant("CONTINUE")))._then()._break();
+            body.assign(result, invoke(ref("bean"), "accept").arg(visitor));
         }
         
         // If the collection type is Object or Serializable, this may be a choice or mixed content
