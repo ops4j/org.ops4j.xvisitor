@@ -17,7 +17,9 @@
  */
 package org.ops4j.xvisitor.test.docbook;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
@@ -31,7 +33,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.matchers.JUnitMatchers.*;
 import org.ops4j.xvisitor.docbook.jaxb.ArticleClass;
 import org.ops4j.xvisitor.docbook.jaxb.Emphasis;
 import org.ops4j.xvisitor.docbook.jaxb.visitor.BaseVisitor;
