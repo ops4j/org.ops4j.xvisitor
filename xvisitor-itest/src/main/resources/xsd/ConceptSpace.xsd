@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://simf.omg.org/ConceptSpace" elementFormDefault="unqualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://simf.omg.org/ConceptSpace">
+
+    <complexType name="Element">
+    	<sequence>
+    		<element name="uri" type="string" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+    		<element name="commonName" type="string" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+    		<element name="definition" type="string" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+    		<element name="version" type="string" maxOccurs="1" minOccurs="1"></element>
+    		<element name="ownedConcepts" type="tns:Element"
+    			minOccurs="0" maxOccurs="unbounded">
+    		</element>
+    	</sequence>
+    </complexType>
+    
+   <complexType name="Document">
+    	<sequence>
+		    <element name="conceptSpace" type="tns:Element" maxOccurs="unbounded" minOccurs="1"></element>
+    	</sequence>
+   </complexType>
+   
+   <element name="document" type="tns:Document"></element>
+
+    <complexType name="Reference">
+    	<complexContent>
+    		<extension base="tns:Element">
+    			<sequence>
+    				<element name="referencedElement" type="string" maxOccurs="1" minOccurs="1"></element>
+    				<element name="referencedElementVersion" type="string" maxOccurs="1" minOccurs="1"></element>
+    			</sequence>
+    		</extension>
+    	</complexContent>
+    </complexType>
+    
+    <complexType name="Constraint">
+    	<complexContent>
+    		<extension base="tns:Element">
+    			<sequence>
+    				<element name="constraintExpression" type="string" maxOccurs="1" minOccurs="1"></element>
+    			</sequence>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="Refinement">
+    	<complexContent>
+    		<extension base="tns:Element">
+    			<sequence>
+    				<element name="parent" type="string" maxOccurs="1" minOccurs="1"></element>
+    				<element name="child" type="string" maxOccurs="1" minOccurs="1"></element>
+    			</sequence>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+</schema>

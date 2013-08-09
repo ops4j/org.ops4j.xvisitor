@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:document xmlns:tns="http://simf.omg.org/ConceptSpace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://simf.omg.org/ConceptSpace ConceptSpace.xsd ">
+  <conceptSpace>
+    <uri>uri1</uri>
+    <commonName>commonName1</commonName>
+    <definition>definition1</definition>
+    <version>version1</version>
+  </conceptSpace>
+  <conceptSpace>
+    <uri>uri2</uri>
+    <commonName>commonName2</commonName>
+    <definition>definition2</definition>
+    <version>version2</version>
+  </conceptSpace>
+  <conceptSpace>
+    <uri>uri3</uri>
+    <commonName>commonName3</commonName>
+    <definition>definition3</definition>
+    <version>version3</version>
+  </conceptSpace>
+</tns:document>

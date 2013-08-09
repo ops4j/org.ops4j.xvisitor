@@ -1,54 +1,78 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <artifactId>xvisitor</artifactId>
-    <groupId>org.ops4j</groupId>
-    <version>0.2.0-SNAPSHOT</version>
-    <relativePath>..</relativePath>
-  </parent>
-  <artifactId>xvisitor-itest</artifactId>
-  <name>XVisitor Integration Tests</name>
-  <dependencies>
-      <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-          <version>4.10</version>
-      </dependency>
-  </dependencies>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.jvnet.jaxb2.maven2</groupId>
-        <artifactId>maven-jaxb2-plugin</artifactId>
-        <version>0.8.0</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <extension>true</extension>
-          <args>
-            <!-- generate visitor classes -->
-            <arg>-Xvisitor</arg>
-            <!-- the plugin selects a random package, by default, so we define it explicitly -->
-            <arg>-Xvisitor-package:org.ops4j.xvisitor.simple.jaxb</arg>
-          </args>
-          <schemaIncludes>
-            <include>xsd/simple.xsd</include>
-          </schemaIncludes>
-          <plugins>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>xvisitor</artifactId>
+        <groupId>org.ops4j</groupId>
+        <version>0.2.0-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
+    <groupId>org.ops4j.xvisitor</groupId>
+    <artifactId>xvisitor-itest</artifactId>
+    <name>XVisitor Integration Tests</name>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
             <plugin>
-              <groupId>org.ops4j.xvisitor</groupId>
-              <artifactId>xvisitor-plugin</artifactId>
-              <version>${project.version}</version>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>0.8.0</version>
+                <configuration>
+                    <extension>true</extension>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.ops4j.xvisitor</groupId>
+                            <artifactId>xvisitor-plugin</artifactId>
+                            <version>${project.version}</version>
+                        </plugin>
+                    </plugins>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>simple</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <args>
+                                <!-- generate visitor classes -->
+                                <arg>-Xvisitor</arg>
+                                <!-- the plugin selects a random package, by default, so we define it 
+                                    explicitly -->
+                                <arg>-Xvisitor-package:org.ops4j.xvisitor.simple.jaxb</arg>
+                            </args>
+                            <schemaIncludes>
+                                <include>xsd/simple.xsd</include>
+                            </schemaIncludes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>concept</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <args>
+                                <!-- generate visitor classes -->
+                                <arg>-Xvisitor</arg>
+                                <!-- the plugin selects a random package, by default, so we define it 
+                                    explicitly -->
+                                <arg>-Xvisitor-package:org.ops4j.xvisitor.concept.jaxb</arg>
+                            </args>
+                            <schemaIncludes>
+                                <include>xsd/ConceptSpace.xsd</include>
+                            </schemaIncludes>
+                            <generateDirectory>${project.build.directory}/generated-sources/concept</generateDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
-          </plugins>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  <groupId>org.ops4j.xvisitor</groupId>
+        </plugins>
+    </build>
 </project>
