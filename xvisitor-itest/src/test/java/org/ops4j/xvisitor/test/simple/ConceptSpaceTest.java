@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Harald Wellmann
+ * Copyright 2013 Harald Wellmann
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,12 @@ import org.omg.simf.conceptspace.Element;
 import org.ops4j.xvisitor.concept.jaxb.BaseVisitor;
 import org.ops4j.xvisitor.concept.jaxb.VisitorAction;
 
+/**
+ * Regression test for XVISITOR-8.
+ * 
+ * @author Harald Wellmann
+ *
+ */
 public class ConceptSpaceTest {
 
 
